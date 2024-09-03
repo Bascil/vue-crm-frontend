@@ -1,0 +1,6 @@
+# The base directory where your project is located
+[build]
+  # Your build command (e.g., `npm run build`, `pnpm build`, `yarn build`)
+  command = "npm run build"
+  # Directory where the build output is located
+  publish = "dist"

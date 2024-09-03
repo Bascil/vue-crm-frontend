@@ -45,9 +45,8 @@ async function login() {
           fill="none"
           xmlns="http://www.w3.org/2000/svg"
         >
-          <!-- SVG path data remains unchanged -->
         </svg>
-        <span class="text-2xl font-semibold text-gray-700">V-Dashboard</span>
+        <span class="text-2xl font-semibold text-gray-700">Sign In</span>
       </div>
       <form class="mt-4" @submit.prevent="login">
         <label class="block">

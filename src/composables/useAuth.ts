@@ -4,6 +4,7 @@ import axiosInstance from '../config/axios'
 import { ENDPOINTS } from '../config/api'
 
 const accessToken = ref<string | null>(localStorage.getItem('access_token'))
+const role = ref<string | null>(localStorage.getItem('role') || null)
 
 export function useAuth() {
   const router = useRouter()
@@ -16,6 +17,12 @@ export function useAuth() {
     axiosInstance.defaults.headers.common['Authorization'] = `Bearer ${token}`
   }
 
+  const setRole = (roleName: string) => {
+    role.value = roleName
+    localStorage.setItem('role', roleName)
+    console.log('Role set in local storage:', localStorage.getItem('role'))  // Verify role storage
+  }
+
   const clearAccessToken = () => {
     accessToken.value = null
     localStorage.removeItem('access_token')
@@ -23,14 +30,23 @@ export function useAuth() {
   }
 
   const getAccessToken = () => accessToken.value
+  const getRole = () => role.value
 
   const login = async (email: string, password: string) => {
     try {
       const response = await axiosInstance.post(ENDPOINTS.LOGIN, { email, password })
-      setAccessToken(response.data.data.access_token)
+      console.log('API Response:', response.data)  // Log the response
+      const { access_token, roleName } = response.data.data
+      if (access_token && roleName) {
+        setAccessToken(access_token)
+        setRole(roleName)
+      } else {
+        console.error('Unexpected API response structure:', response.data)
+      }
       return response.data
     } catch (error) {
       clearAccessToken()
+      console.error('Login error:', error)
       throw error
     }
   }
@@ -44,6 +60,7 @@ export function useAuth() {
     isAuthenticated,
     login,
     logout,
-    getAccessToken,  // Export getAccessToken here
+    getAccessToken,
+    getRole
   }
 }

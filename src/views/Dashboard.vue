@@ -6,7 +6,7 @@ const store = useStore();
 
 // Fetch users when the component is mounted
 onMounted(() => {
-  store.dispatch('users/fetchUsers');
+  store.dispatch('users/fetchUsers',{ page: 1, perPage: 10 });
 });
 
 // Map Vuex state to component

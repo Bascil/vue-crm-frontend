@@ -10,7 +10,14 @@ import Customers from './views/Customers.vue'
 import Leads from './views/Leads.vue'
 import Tasks from './views/Tasks.vue'
 import Projects from './views/Projects.vue'
+import { useStore } from 'vuex'
 
+declare module 'vue-router' {
+  interface RouteMeta {
+    requiresAuth?: boolean
+    allowedRoles?: string[]
+  }
+}
 const routes: RouteRecordRaw[] = [
   {
     path: '/',
@@ -22,6 +29,7 @@ const routes: RouteRecordRaw[] = [
     path: '/dashboard',
     name: 'Dashboard',
     component: Dashboard,
+    meta: { requiresAuth: true},
   },
   {
     path: '/users',
@@ -63,6 +71,33 @@ const routes: RouteRecordRaw[] = [
 const router = createRouter({
   history: createWebHistory(),
   routes,
+})
+
+// Global navigation guard
+router.beforeEach(async (to, from, next) => {
+  const store = useStore()
+
+  const isAuthenticated = store.getters['auth/isAuthenticated']
+  const userRole = store.getters['auth/getRole']
+
+  console.log('User Role:', userRole) // Debugging output
+
+  // Check if route requires authentication
+  if (to.meta.requiresAuth) {
+    if (!isAuthenticated) {
+      // Redirect to login if not authenticated
+      next({ name: 'Login' })
+    } else if (to.meta.allowedRoles && !to.meta.allowedRoles.includes(userRole)) {
+      // Redirect to a "not authorized" page or handle unauthorized access
+      next({ name: 'Login' })
+    } else {
+      // Proceed to route
+      next()
+    }
+  } else {
+    // Proceed to route if no authentication required
+    next()
+  }
 })
 
 export default router

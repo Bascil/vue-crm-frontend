@@ -1,16 +1,37 @@
 <script setup lang="ts">
-import { ref } from 'vue'
-import { useSidebar } from '../composables/useSidebar'
+import { ref, computed } from 'vue';
+import { useRoute } from 'vue-router';
+import { useSidebar } from '../composables/useSidebar';
+import { useUser } from '../composables/useUser'; // Assuming you have a composable to get the user role
 
-const { isOpen } = useSidebar()
+const { isOpen } = useSidebar();
+const { role } = useUser(); // Assuming this returns a ComputedRef<string>
+
+// Unwrap role to use its value
+const userRole = computed(() => role.value);
+
 const activeClass = ref(
-  'bg-gray-600 bg-opacity-25 text-gray-100 border-gray-100',
-)
+  'bg-gray-600 bg-opacity-25 text-gray-100 border-gray-100'
+);
 const inactiveClass = ref(
-  'border-gray-900 text-gray-500 hover:bg-gray-600 hover:bg-opacity-25 hover:text-gray-100',
-)
-</script>
+  'border-gray-900 text-gray-500 hover:bg-gray-600 hover:bg-opacity-25 hover:text-gray-100'
+);
 
+const hasAccess = (route: string) => {
+  const accessibleRoutesForAdmin = ['Dashboard', 'Tasks', 'Projects', 'Profile', 'Customers', 'Leads'];
+  
+  switch (userRole.value) {
+    case 'Admin':
+      return true; // Admin has access to all routes
+    case 'Engineer':
+      return ['Dashboard', 'Tasks', 'Projects', 'Profile'].includes(route);
+    case 'Manager':
+      return ['Dashboard', 'Tasks', 'Projects', 'Profile', 'Customers', 'Leads'].includes(route);
+    default:
+      return false;
+  }
+};
+</script>
 <template>
   <div class="flex">
     <!-- Backdrop -->
@@ -53,6 +74,7 @@ const inactiveClass = ref(
 
       <nav class="mt-10">
         <router-link
+          v-if="hasAccess('Dashboard')"
           class="flex items-center px-6 py-2 mt-4 duration-200 border-l-4"
           :class="[$route.name === 'Dashboard' ? activeClass : inactiveClass]"
           to="/dashboard"
@@ -77,83 +99,11 @@ const inactiveClass = ref(
         </router-link>
 
         <router-link
-          class="flex items-center px-6 py-2 mt-4 duration-200 border-l-4"
-          :class="[$route.name === 'Users' ? activeClass : inactiveClass]"
-          to="/users"
-        >
-          <!-- New User SVG -->
-          <svg
-            class="w-5 h-5"
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 24 24"
-            fill="currentColor"
-          >
-            <path d="M12 12c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm0 2c-3.33 0-10 1.67-10 5v3h20v-3c0-3.33-6.67-5-10-5z"/>
-          </svg>
-
-          <span class="mx-4">Users</span>
-        </router-link>
-
-        <router-link
-            class="flex items-center px-6 py-2 mt-4 duration-200 border-l-4"
-            :class="[$route.name === 'Roles' ? activeClass : inactiveClass]"
-            to="/roles"
-          >
-            <!-- New Role SVG -->
-            <svg
-              class="w-5 h-5"
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 24 24"
-              fill="currentColor"
-            >
-              <path d="M12 2C10.9 2 10 2.9 10 4s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 14c-1.1 0-2 .9-2 2v4h4v-4c0-1.1-.9-2-2-2zm9.19-9.19l-4.34-4.34c-.39-.39-1.02-.39-1.41 0L14 2.91l5.38 5.38c.39.39.39 1.02 0 1.41l-4.34 4.34c-.39.39-1.02.39-1.41 0L10 13.09 4.62 18.47c-.39.39-1.02.39-1.41 0l-4.34-4.34c-.39-.39-.39-1.02 0-1.41L5.09 8.62 7.5 6.21c.39-.39 1.02-.39 1.41 0l4.34 4.34 5.38-5.38c.39-.39 1.02-.39 1.41 0l2.16 2.16c.39.39.39 1.02 0 1.41z"/>
-            </svg>
-
-            <span class="mx-4">Roles</span>
-        </router-link>
-
-        <router-link
-          class="flex items-center px-6 py-2 mt-4 duration-200 border-l-4"
-          :class="[$route.name === 'Customers' ? activeClass : inactiveClass]"
-          to="/customers"
-        >
-          <!-- Customers SVG -->
-          <svg
-            class="w-5 h-5"
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 24 24"
-            fill="currentColor"
-          >
-            <path d="M12 12c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm0 2c-3.33 0-10 1.67-10 5v3h20v-3c0-3.33-6.67-5-10-5z"/>
-          </svg>
-
-          <span class="mx-4">Customers</span>
-        </router-link>
-
-        <router-link
-          class="flex items-center px-6 py-2 mt-4 duration-200 border-l-4"
-          :class="[$route.name === 'Leads' ? activeClass : inactiveClass]"
-          to="/leads"
-        >
-          <!-- Leads SVG -->
-          <svg
-            class="w-5 h-5"
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 24 24"
-            fill="currentColor"
-          >
-            <path d="M12 2c-5.52 0-10 4.48-10 10s4.48 10 10 10 10-4.48 10-10-4.48-10-10-10zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-1-13h2v6h-2zm0 8h2v2h-2z"/>
-          </svg>
-
-          <span class="mx-4">Leads</span>
-        </router-link>
-
-        <router-link
+          v-if="hasAccess('Tasks')"
           class="flex items-center px-6 py-2 mt-4 duration-200 border-l-4"
           :class="[$route.name === 'Tasks' ? activeClass : inactiveClass]"
           to="/tasks"
         >
-          <!-- Tasks SVG -->
           <svg
             class="w-5 h-5"
             xmlns="http://www.w3.org/2000/svg"
@@ -167,11 +117,68 @@ const inactiveClass = ref(
         </router-link>
 
         <router-link
+          v-if="hasAccess('Projects')"
+          class="flex items-center px-6 py-2 mt-4 duration-200 border-l-4"
+          :class="[$route.name === 'Projects' ? activeClass : inactiveClass]"
+          to="/projects"
+        >
+          <svg
+            class="w-5 h-5"
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 24 24"
+            fill="currentColor"
+          >
+            <path d="M12 2L2 7v6l10 5 10-5V7l-10-5z"/>
+          </svg>
+
+          <span class="mx-4">Projects</span>
+        </router-link>
+
+
+        <router-link
+          v-if="hasAccess('Customers')"
+          class="flex items-center px-6 py-2 mt-4 duration-200 border-l-4"
+          :class="[$route.name === 'Customers' ? activeClass : inactiveClass]"
+          to="/customers"
+        >
+          <!-- Customers SVG -->
+          <svg
+            class="w-5 h-5"
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 24 24"
+            fill="currentColor"
+          >
+            <path d="M3 6c0-1.11.89-2 2-2s2 .89 2 2-2 2-2 2-2-.89-2-2zm6-2h6c1.1 0 2 .9 2 2s-.9 2-2 2H9c-1.1 0-2-.9-2-2s.9-2 2-2zm10 2c1.1 0 2 .89 2 2s-.9 2-2 2-2-.89-2-2 .9-2 2-2zm-4 2c0-1.1.9-2 2-2s2 .9 2 2-2 2-2 2-2-.9-2-2z"/>
+          </svg>
+
+          <span class="mx-4">Customers</span>
+        </router-link>
+
+        <router-link
+          v-if="hasAccess('Leads')"
+          class="flex items-center px-6 py-2 mt-4 duration-200 border-l-4"
+          :class="[$route.name === 'Leads' ? activeClass : inactiveClass]"
+          to="/leads"
+        >
+          <!-- Leads SVG -->
+          <svg
+            class="w-5 h-5"
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 24 24"
+            fill="currentColor"
+          >
+            <path d="M12 2C7.03 2 3.22 5.48 1.3 10.44A8.01 8.01 0 0 0 4.24 20c1.65 1.83 4.05 3 6.76 3 2.71 0 5.12-1.1 6.71-2.94A8.003 8.003 0 0 0 22 10c0-4.42-3.58-8-8-8zM12 18c-1.82 0-3.49-.65-4.82-1.7C7.66 15.1 8.33 13 10 12c1.76-1.04 4-1.04 5.76 0 1.64 1.05 2.21 3.1 1.58 4.58C15.49 17.35 13.82 18 12 18z"/>
+          </svg>
+
+          <span class="mx-4">Leads</span>
+        </router-link>
+
+        <router-link
+          v-if="hasAccess('Profile')"
           class="flex items-center px-6 py-2 mt-4 duration-200 border-l-4"
           :class="[$route.name === 'Profile' ? activeClass : inactiveClass]"
           to="/profile"
         >
-          <!-- Profile SVG -->
           <svg
             class="w-5 h-5"
             xmlns="http://www.w3.org/2000/svg"
@@ -183,6 +190,7 @@ const inactiveClass = ref(
 
           <span class="mx-4">Profile</span>
         </router-link>
+
       </nav>
     </div>
   </div>

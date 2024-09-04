@@ -1,38 +1,33 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
+import { useStore } from 'vuex'
 import { ENDPOINTS } from '@/config/api'
 import api from '@/config/axios'
 import axios from 'axios'
 
 const router = useRouter()
+const store = useStore()
+
 const email = ref('')
 const password = ref('')
 const errorMessage = ref('')
 
 async function login() {
   try {
-    const response = await api.post(ENDPOINTS.LOGIN, {
+    await store.dispatch('auth/login', {
       email: email.value,
       password: password.value,
     })
-
-    // Store the token in localStorage
-    localStorage.setItem('access_token', response.data.data.access_token)
-    // Redirect to dashboard
+    // Redirect or perform other actions after successful login
     router.push('/dashboard')
   } catch (error) {
-    if (axios.isAxiosError(error) && error.response) {
-      // Handle the specific error structure
-      const { message, statusCode } = error.response.data
-      errorMessage.value = message || 'Login failed. Please try again.'
-      console.error(`Login error: ${message} (Status code: ${statusCode})`)
-    } else {
-      console.error('Login error:', error)
-      errorMessage.value = 'An error occurred. Please try again later.'
-    }
+    // Handle login error
+    console.error('Login failed:', error)
+    errorMessage.value = 'Login failed. Please try again.'
   }
 }
+
 </script>
 
 <template>

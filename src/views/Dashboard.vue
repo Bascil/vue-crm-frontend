@@ -1,16 +1,10 @@
 <script setup lang="ts">
-import { computed, onMounted, ref } from 'vue'
+import { computed} from 'vue'
 import { useStore } from 'vuex';
 
 const store = useStore();
 
-// Fetch users when the component is mounted
-onMounted(() => {
-  store.dispatch('users/fetchUsers',{ page: 1, perPage: 10 });
-});
-
 // Map Vuex state to component
-const users = computed(() => store.state.users.users);
 const userRole = computed(() => store.getters['auth/getRole'])
 </script>
 

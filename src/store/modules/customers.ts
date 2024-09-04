@@ -63,7 +63,7 @@ const customers: Module<CustomersState, RootState> = {
       try {
         const token = getAccessToken();
         if (token) {
-          const response = await api.get(`/customers?page=${page}&perPage=${perPage}`, {
+            const response = await api.get(`${ENDPOINTS.CUSTOMERS}?page=${page}&perPage=${perPage}`, {
             headers: {
               Authorization: `Bearer ${token}`,
             },

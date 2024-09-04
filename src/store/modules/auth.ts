@@ -6,6 +6,7 @@ import { RootState } from '@/store'
 // Define types for state
 interface AuthState {
   accessToken: string | null
+  refreshToken: string | null
   role: string | null
   user: {
     firstName: string | null
@@ -16,6 +17,10 @@ interface AuthState {
 
 // Define types for mutation payloads
 interface SetAccessTokenPayload {
+  token: string
+}
+
+interface SetRefreshTokenPayload {
   token: string
 }
 
@@ -34,6 +39,7 @@ const auth: Module<AuthState, RootState> = {
   namespaced: true,
   state: (): AuthState => ({
     accessToken: localStorage.getItem('access_token') || null,
+    refreshToken: localStorage.getItem('refresh_token') || null,
     role: localStorage.getItem('role') || null,
     user: JSON.parse(localStorage.getItem('user') || 'null')
   }),
@@ -48,6 +54,10 @@ const auth: Module<AuthState, RootState> = {
       localStorage.setItem('access_token', payload.token)
       api.defaults.headers.common['Authorization'] = `Bearer ${payload.token}`
     },
+    SET_REFRESH_TOKEN(state: AuthState, payload: SetRefreshTokenPayload) {
+      state.refreshToken = payload.token
+      localStorage.setItem('refresh_token', payload.token)
+    },
     SET_ROLE(state: AuthState, payload: SetRolePayload) {
       state.role = payload.roleName
       localStorage.setItem('role', payload.roleName)
@@ -58,9 +68,11 @@ const auth: Module<AuthState, RootState> = {
     },
     CLEAR_AUTH(state: AuthState) {
       state.accessToken = null
+      state.refreshToken = null
       state.role = null
       state.user = null
       localStorage.removeItem('access_token')
+      localStorage.removeItem('refresh_token')
       localStorage.removeItem('role')
       localStorage.removeItem('user')
       delete api.defaults.headers.common['Authorization']
@@ -70,9 +82,10 @@ const auth: Module<AuthState, RootState> = {
     async login({ commit }, { email, password }: { email: string, password: string }) {
       try {
         const response = await api.post(ENDPOINTS.LOGIN, { email, password })
-        const { access_token, roleName, firstName, lastName } = response.data.data
+        const { access_token, refresh_token, roleName, firstName, lastName } = response.data.data
         if (access_token && roleName) {
           commit('SET_ACCESS_TOKEN', { token: access_token })
+          commit('SET_REFRESH_TOKEN', { token: refresh_token })
           commit('SET_ROLE', { roleName })
           commit('SET_USER', { firstName, lastName, email })
         } else {

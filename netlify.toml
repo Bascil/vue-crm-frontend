@@ -4,3 +4,8 @@
   command = "npm run build"
   # Directory where the build output is located
   publish = "dist"
+
+  [[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200

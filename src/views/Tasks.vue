@@ -98,7 +98,6 @@ onMounted(() => {
             <thead>
               <tr>
                 <th class="px-6 py-3 text-xs font-medium leading-4 tracking-wider text-left text-gray-500 uppercase bg-gray-100 border-b border-gray-200">Title</th>
-                <th class="px-6 py-3 text-xs font-medium leading-4 tracking-wider text-left text-gray-500 uppercase bg-gray-100 border-b border-gray-200">Description</th>
                 <th class="px-6 py-3 text-xs font-medium leading-4 tracking-wider text-left text-gray-500 uppercase bg-gray-100 border-b border-gray-200">Status</th>
                 <th class="px-6 py-3 text-xs font-medium leading-4 tracking-wider text-left text-gray-500 uppercase bg-gray-100 border-b border-gray-200">Due Date</th>
                 <th class="px-6 py-3 text-xs font-medium leading-4 tracking-wider text-left text-gray-500 uppercase bg-gray-100 border-b border-gray-200">Project</th>
@@ -109,7 +108,6 @@ onMounted(() => {
             <tbody class="bg-white">
               <tr v-for="(task, index) in tasks" :key="index">
                 <td class="px-6 py-4 border-b border-gray-200 whitespace-nowrap">{{ task.title }}</td>
-                <td class="px-6 py-4 border-b border-gray-200 whitespace-nowrap">{{ task.description }}</td>
                 <td class="px-6 py-4 border-b border-gray-200 whitespace-nowrap">{{ task.status }}</td>
                 <td class="px-6 py-4 border-b border-gray-200 whitespace-nowrap">{{ new Date(task.dueDate).toLocaleDateString() }}</td>
                 <td class="px-6 py-4 border-b border-gray-200 whitespace-nowrap">{{ task.projectName }}</td>

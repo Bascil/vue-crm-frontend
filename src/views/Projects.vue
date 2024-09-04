@@ -90,7 +90,6 @@ onMounted(() => {
               <thead>
                 <tr>
                   <th class="px-6 py-3 text-xs font-medium leading-4 tracking-wider text-left text-gray-500 uppercase bg-gray-100 border-b border-gray-200">Name</th>
-                  <th class="px-6 py-3 text-xs font-medium leading-4 tracking-wider text-left text-gray-500 uppercase bg-gray-100 border-b border-gray-200">Description</th>
                   <th class="px-6 py-3 text-xs font-medium leading-4 tracking-wider text-left text-gray-500 uppercase bg-gray-100 border-b border-gray-200">Status</th>
                   <th class="px-6 py-3 text-xs font-medium leading-4 tracking-wider text-left text-gray-500 uppercase bg-gray-100 border-b border-gray-200">Start Date</th>
                   <th class="px-6 py-3 text-xs font-medium leading-4 tracking-wider text-left text-gray-500 uppercase bg-gray-100 border-b border-gray-200">End Date</th>
@@ -101,7 +100,6 @@ onMounted(() => {
               <tbody class="bg-white">
                 <tr v-for="(project, index) in projects" :key="index">
                   <td class="px-6 py-4 border-b border-gray-200 whitespace-nowrap">{{ project.name }}</td>
-                  <td class="px-6 py-4 border-b border-gray-200 whitespace-nowrap">{{ project.description }}</td>
                   <td class="px-6 py-4 border-b border-gray-200 whitespace-nowrap">{{ project.status }}</td>
                   <td class="px-6 py-4 border-b border-gray-200 whitespace-nowrap">{{ new Date(project.startDate).toLocaleDateString() }}</td>
                   <td class="px-6 py-4 border-b border-gray-200 whitespace-nowrap">{{ new Date(project.endDate).toLocaleDateString() }}</td>

@@ -188,15 +188,15 @@ onMounted(() => {
   />
 </div>
 
-<div class="mb-4">
-  <label for="endDate" class="block text-sm font-medium text-gray-700">Project End</label>
-  <input
-    id="endDate"
-    v-model="formData.endDate"
-    type="date"
-    class="w-full px-4 py-2 mb-2 border rounded-md"
-  />
-</div>
+        <div class="mb-4">
+        <label for="endDate" class="block text-sm font-medium text-gray-700">Project End</label>
+        <input
+            id="endDate"
+            v-model="formData.endDate"
+            type="date"
+            class="w-full px-4 py-2 mb-2 border rounded-md"
+        />
+        </div>
           <select v-model="formData.status" class="w-full px-4 py-2 mb-2 border rounded-md">
             <option value="planning">Planning</option>
             <option value="in_progress">In Progress</option>

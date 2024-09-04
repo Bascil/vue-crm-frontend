@@ -196,7 +196,15 @@ onMounted(() => {
       <div class="mt-2">
         <input v-model="formData.title" type="text" placeholder="Title" class="w-full px-4 py-2 mb-2 border rounded-md">
         <textarea v-model="formData.description" placeholder="Description" class="w-full px-4 py-2 mb-2 border rounded-md"></textarea>
-        <input v-model="formData.dueDate" type="date" class="w-full px-4 py-2 mb-2 border rounded-md">
+        <div class="mb-4">
+        <label for="dueDate" class="block text-sm font-medium text-gray-700">Due Date</label>
+        <input
+            id="dueDate"
+            v-model="formData.dueDate"
+            type="date"
+            class="w-full px-4 py-2 mb-2 border rounded-md"
+        />
+        </div>
 
         <!-- Project Dropdown -->
         <select v-model="formData.projectId" class="w-full px-4 py-2 mb-2 border rounded-md">

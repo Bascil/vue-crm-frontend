@@ -11,6 +11,7 @@ onMounted(() => {
 
 // Map Vuex state to component
 const users = computed(() => store.state.users.users);
+const userRole = computed(() => store.getters['auth/getRole'])
 </script>
 
 <template>
@@ -21,10 +22,12 @@ const users = computed(() => store.state.users.users);
 
     <div class="mt-4">
       <div class="flex flex-wrap -mx-6">
-        <div class="w-full px-6 sm:w-1/2 xl:w-1/3">
+        <div  v-if="userRole === 'Admin'" class="w-full px-6 sm:w-1/2 xl:w-1/3">
+     
           <div
             class="flex items-center px-5 py-6 bg-white rounded-md shadow-sm"
           >
+          
             <div class="p-3 bg-indigo-600 bg-opacity-75 rounded-full">
               <svg
                 class="w-8 h-8 text-white"
@@ -59,6 +62,7 @@ const users = computed(() => store.state.users.users);
               </svg>
             </div>
 
+           
             <div class="mx-5">
               <h4 class="text-2xl font-semibold text-gray-700">
                 5
@@ -67,7 +71,7 @@ const users = computed(() => store.state.users.users);
                 Total Users
               </div>
             </div>
-          </div>
+            </div>
         </div>
 
         <div class="w-full px-6 mt-6 sm:w-1/2 xl:w-1/3 sm:mt-0">
@@ -147,6 +151,7 @@ const users = computed(() => store.state.users.users);
       </div>
     </div>
 
+    <div v-if="userRole === 'Admin'">
     <div class="mt-8" />
 
     <div class="flex flex-col mt-8">
@@ -194,6 +199,7 @@ const users = computed(() => store.state.users.users);
             </tbody>
           </table>
         </div>
+      </div>
       </div>
    </div>
   </div>

@@ -1,8 +1,12 @@
 <script lang="ts" setup>
-import { ref, reactive, computed, onMounted } from 'vue';
+import { ref, reactive, computed, onMounted, watch } from 'vue';
 import { useStore } from 'vuex';
 import { useToast } from 'vue-toastification';
+import { useRoute } from 'vue-router';
 const toast = useToast();
+
+
+const route = useRoute();
 
 // Define types
 interface User {
@@ -108,13 +112,18 @@ function handleCreateUserClick() {
 function handlePageChange(page: number) {
   currentPage.value = page;
   store.dispatch('users/fetchUsers', { page: currentPage.value, perPage: perPage.value });
+  store.dispatch('roles/fetchRoles', {page:1, perPage:10}); 
 }
 
 onMounted(() => {
   store.dispatch('users/fetchUsers', { page: currentPage.value, perPage: perPage.value });
-  store.dispatch('roles/fetchRoles', {page:1, perPage:10}); // Fetch projects when component mounts
+  store.dispatch('roles/fetchRoles', {page:1, perPage:10}); 
 });
 
+watch(() => route.path, () => {
+  store.dispatch('users/fetchUsers', { page: currentPage.value, perPage: perPage.value });
+  store.dispatch('roles/fetchRoles', {page:1, perPage:10});
+});
 </script>
 
 <template>

@@ -1,8 +1,11 @@
 <script lang="ts" setup>
-import { ref, reactive, computed, onMounted } from 'vue';
+import { ref, reactive, computed, onMounted, watch } from 'vue';
+import { useRoute } from 'vue-router';
 import { useToast } from 'vue-toastification';
 const toast = useToast();
 import { useStore } from 'vuex';
+
+const route = useRoute();
 
 interface Task {
   title: string;
@@ -115,6 +118,11 @@ function handlePageChange(page: number) {
 }
 
 onMounted(() => {
+  store.dispatch('tasks/fetchTasks', { page: currentPage.value, perPage: perPage.value });
+  store.dispatch('projects/fetchProjects', {page:1, perPage:10}); // Fetch projects when component mounts
+});
+
+watch(() => route.path, () => {
   store.dispatch('tasks/fetchTasks', { page: currentPage.value, perPage: perPage.value });
   store.dispatch('projects/fetchProjects', {page:1, perPage:10}); // Fetch projects when component mounts
 });

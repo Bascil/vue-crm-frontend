@@ -35,36 +35,43 @@ const routes: RouteRecordRaw[] = [
     path: '/users',
     name: 'Users',
     component: Users,
+    meta: { requiresAuth: true},
   },
   {
     path: '/roles',
     name: 'Roles',
     component: Roles,
+    meta: { requiresAuth: true},
   },
   {
     path: '/customers',
     name: 'Customers',
     component: Customers,
+    meta: { requiresAuth: true},
   },
   {
     path: '/leads',
     name: 'Leads',
     component: Leads,
+    meta: { requiresAuth: true},
   },
   {
     path: '/projects',
     name: 'Projects',
     component: Projects,
+    meta: { requiresAuth: true},
   },
   {
     path: '/tasks',
     name: 'Tasks',
     component: Tasks,
+    meta: { requiresAuth: true},
   },
   {
     path: '/profile',
     name: 'Profile',
     component: Profile,
+    meta: { requiresAuth: true},
   },
 ]
 

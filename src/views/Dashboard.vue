@@ -136,7 +136,7 @@ const userRole = computed(() => store.getters['auth/getRole'])
                 25
               </h4>
               <div class="text-gray-500">
-                Total Leads
+                Total Tasks
               </div>
             </div>
           </div>

@@ -72,7 +72,7 @@ const projects: Module<ProjectsState, RootState> = {
           return response;
         }
       } catch (error) {
-        console.error('Error fetching projects:', error);
+        throw error
       }
     },
     async createProject({ commit }, project: Project) {

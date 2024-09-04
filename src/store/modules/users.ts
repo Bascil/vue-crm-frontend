@@ -64,9 +64,10 @@ const users: Module<UsersState, RootState> = {
           });
           const data = response.data;
           commit('setUsers', { users: data.data, meta: data.meta });
+          return response;
         }
       } catch (error) {
-        console.error('Error fetching users:', error);
+        throw error
       }
     },
     async createUser({ commit }, user: User) {

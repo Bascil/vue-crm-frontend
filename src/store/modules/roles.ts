@@ -79,9 +79,10 @@ const roles: Module<RolesState, RootState> = {
           });
           const data = response.data;
           commit('setRoles', { roles: data.data, meta: data.meta });
+          return response
         }
       } catch (error) {
-        console.error('Error fetching roles:', error);
+        throw error
       }
     },
     async fetchPermissions({ commit }) {

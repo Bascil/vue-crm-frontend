@@ -199,7 +199,7 @@ onMounted(() => {
             <input v-model="formData.lastName" type="text" placeholder="Last Name" class="w-full px-4 py-2 border rounded-md">
             <input v-model="formData.email" type="email" placeholder="Email" class="w-full px-4 py-2 border rounded-md">
             <input v-model="formData.phoneNumber" type="text" placeholder="Phone Number" class="w-full px-4 py-2 border rounded-md">
-            <input v-model="formData.address" type="text" placeholder="Tax PIN" class="w-full px-4 py-2 border rounded-md">
+            <input v-model="formData.address" type="text" placeholder="Address" class="w-full px-4 py-2 border rounded-md">
           </div>
 
           <!-- Modal Footer -->

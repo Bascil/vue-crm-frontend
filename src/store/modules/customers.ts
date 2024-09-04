@@ -70,9 +70,10 @@ const customers: Module<CustomersState, RootState> = {
           });
           const data = response.data;
           commit('setCustomers', { customers: data.data, meta: data.meta });
+          return response;
         }
       } catch (error) {
-        console.error('Error fetching customers:', error);
+        throw error
       }
     },
     async createCustomer({ commit }, user: Customer) {

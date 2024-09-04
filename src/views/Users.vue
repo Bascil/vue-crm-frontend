@@ -13,6 +13,7 @@ interface User {
   phoneNumber: string;
   taxPin: string;
   password: string;
+  roleId: string;
 }
 
 const store = useStore();
@@ -26,9 +27,11 @@ const formData = reactive<User>({
   phoneNumber: '',
   taxPin: '',
   password: '',
+  roleId: ''
 });
 
 const users = computed(() => store.state.users.users);
+const roles = computed(() => store.state.roles.roles);
 const meta = computed(() => store.state.users.meta);
 const currentPage = ref(1);
 const perPage = ref(10);
@@ -46,6 +49,7 @@ function openUserModal(user: User | null = null) {
       phoneNumber: '',
       taxPin: '',
       password: '',
+      roleId: ''
     });
   }
   openModal.value = true;
@@ -108,7 +112,9 @@ function handlePageChange(page: number) {
 
 onMounted(() => {
   store.dispatch('users/fetchUsers', { page: currentPage.value, perPage: perPage.value });
+  store.dispatch('roles/fetchRoles', {page:1, perPage:10}); // Fetch projects when component mounts
 });
+
 </script>
 
 <template>
@@ -194,6 +200,13 @@ onMounted(() => {
 
           <!-- Modal Body -->
           <div class="space-y-4">
+              <!-- Role Dropdown -->
+          <select v-model="formData.roleId" class="w-full px-4 py-2 mb-2 border rounded-md">
+            <option value="" disabled>Select a Role</option>
+            <option v-for="role in roles" :key="role.id" :value="role.id">
+              {{ role.name }}
+            </option>
+          </select>
             <input v-model="formData.firstName" type="text" placeholder="First Name" class="w-full px-4 py-2 border rounded-md">
             <input v-model="formData.lastName" type="text" placeholder="Last Name" class="w-full px-4 py-2 border rounded-md">
             <input v-model="formData.email" type="email" placeholder="Email" class="w-full px-4 py-2 border rounded-md">

@@ -70,9 +70,10 @@ const tasks: Module<TasksState, RootState> = {
           });
           const data = response.data;
           commit('setTasks', { tasks: data.data, meta: data.meta });
+          return response
         }
       } catch (error) {
-        console.error('Error fetching tasks:', error);
+        throw error
       }
     },
     async createTask({ commit }, user: Task) {

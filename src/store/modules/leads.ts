@@ -71,9 +71,10 @@ const leads: Module<LeadsState, RootState> = {
           });
           const data = response.data;
           commit('setLeads', { leads: data.data, meta: data.meta });
+          return response
         }
       } catch (error) {
-        console.error('Error fetching leads:', error);
+        throw error
       }
     },
     async createLead({ commit }, user: Lead) {

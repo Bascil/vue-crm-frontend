@@ -1,13 +1,15 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue';
 import { useStore } from 'vuex';
-import TagsInput from '@/components/TagsInput.vue'; // Import your tag input component
 
 const store = useStore();
 const openModal = ref(false);
 const isEditMode = ref(false);
 
-// Define Role type
+// Pagination state
+const currentPage = ref(1);
+const perPage = ref(10);
+
 interface FormData {
   id: string | null;
   name: string;
@@ -29,7 +31,7 @@ const openRoleModal = (role: FormData | null = null) => {
     formData.value = {
       id: role.id,
       name: role.name,
-      permissions: role.permissions || [], // Ensure permissions is an array
+      permissions: role.permissions || [],
     };
   } else {
     formData.value = {
@@ -58,10 +60,15 @@ function deleteRole(roleId: string) {
   store.dispatch('roles/deleteRole', roleId);
 }
 
+// Fetch roles with pagination on component mount
 onMounted(() => {
-  store.dispatch('roles/fetchRoles');
-  store.dispatch('roles/fetchPermissions');
+  store.dispatch('roles/fetchRoles', { page: currentPage.value, perPage: perPage.value });
 });
+
+function changePage(page: number) {
+  currentPage.value = page;
+  store.dispatch('roles/fetchRoles', { page: currentPage.value, perPage: perPage.value });
+}
 </script>
 
 <template>
@@ -97,7 +104,18 @@ onMounted(() => {
           </table>
         </div>
       </div>
+
+      <!-- Pagination Controls -->
+      <div class="mt-4 flex justify-center">
+        <button @click="changePage(currentPage - 1)" :disabled="currentPage === 1" class="px-3 py-1 mx-1 text-gray-700 bg-gray-200 rounded-md hover:bg-gray-300">
+          Previous
+        </button>
+        <button @click="changePage(currentPage + 1)" class="px-3 py-1 mx-1 text-gray-700 bg-gray-200 rounded-md hover:bg-gray-300">
+          Next
+        </button>
+      </div>
     </div>
+  </div>
 
     <!-- Modal for creating/editing role -->
     <div v-if="openModal" class="fixed inset-0 flex items-center justify-center bg-gray-500 bg-opacity-50">
@@ -120,7 +138,6 @@ onMounted(() => {
         </form>
       </div>
     </div>
-  </div>
 </template>
 
 <style scoped>

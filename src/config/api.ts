@@ -5,4 +5,8 @@ export const ENDPOINTS = {
   USERS: `${API_BASE_URL}/users`,
   ROLES: `${API_BASE_URL}/roles`,
   PERMISSIONS: `${API_BASE_URL}/permissions`,
+  CUSTOMERS: `${API_BASE_URL}/customers`,
+  LEADS: `${API_BASE_URL}/leads`,
+  PROJECTS: `${API_BASE_URL}/projects`,
+  TASKS: `${API_BASE_URL}/tasks`,
 }

@@ -9,6 +9,7 @@ import Profile from './views/Profile.vue'
 import Customers from './views/Customers.vue'
 import Leads from './views/Leads.vue'
 import Tasks from './views/Tasks.vue'
+import Projects from './views/Projects.vue'
 
 const routes: RouteRecordRaw[] = [
   {
@@ -41,6 +42,11 @@ const routes: RouteRecordRaw[] = [
     path: '/leads',
     name: 'Leads',
     component: Leads,
+  },
+  {
+    path: '/projects',
+    name: 'Projects',
+    component: Projects,
   },
   {
     path: '/tasks',

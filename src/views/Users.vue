@@ -12,10 +12,7 @@ interface User {
   taxPin: string;
 }
 
-// Define store
 const store = useStore();
-
-// Reactive data
 const openModal = ref(false);
 const isEditMode = ref(false);
 const formData = reactive<User>({
@@ -27,14 +24,15 @@ const formData = reactive<User>({
   taxPin: '',
 });
 
-// Computed property for users
 const users = computed(() => store.state.users.users);
+const meta = computed(() => store.state.users.meta);
+const currentPage = ref(1);
+const perPage = ref(10);
 
-// Methods
 function openUserModal(user: User | null = null) {
   isEditMode.value = !!user;
   if (user) {
-    Object.assign(formData, user); // Use Object.assign to update reactive properties
+    Object.assign(formData, user);
   } else {
     Object.assign(formData, {
       id: '',
@@ -65,12 +63,15 @@ function handleCreateUserClick() {
   openUserModal();
 }
 
-// Fetch users on component mount
+function handlePageChange(page: number) {
+  currentPage.value = page;
+  store.dispatch('users/fetchUsers', { page: currentPage.value, perPage: perPage.value });
+}
+
 onMounted(() => {
-  store.dispatch('users/fetchUsers');
+  store.dispatch('users/fetchUsers', { page: currentPage.value, perPage: perPage.value });
 });
 </script>
-
 
 <template>
   <h3 class="text-3xl font-medium text-gray-700">User List</h3>
@@ -112,6 +113,25 @@ onMounted(() => {
             </tbody>
           </table>
         </div>
+      </div>
+
+      <!-- Pagination Controls -->
+      <div v-if="meta" class="mt-4 flex justify-between items-center">
+        <button
+          @click="handlePageChange(meta.currentPage - 1)"
+          :disabled="meta.currentPage === 1"
+          class="px-4 py-2 font-medium text-gray-700 bg-gray-200 rounded-md hover:bg-gray-300 disabled:opacity-50"
+        >
+          Previous
+        </button>
+        <span>Page {{ meta.currentPage }} of {{ meta.lastPage }}</span>
+        <button
+          @click="handlePageChange(meta.currentPage + 1)"
+          :disabled="meta.currentPage === meta.lastPage"
+          class="px-4 py-2 font-medium text-gray-700 bg-gray-200 rounded-md hover:bg-gray-300 disabled:opacity-50"
+        >
+          Next
+        </button>
       </div>
     </div>
   </div>

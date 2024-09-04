@@ -20,6 +20,14 @@ export interface Permission {
 export interface RolesState {
   roles: Role[];
   permissions: Permission[];
+  meta: {
+    from: number;
+    to: number;
+    total: number;
+    perPage: number;
+    lastPage: number;
+    currentPage: number;
+  } | null;
 }
 
 const { getAccessToken } = useAuth();
@@ -29,10 +37,19 @@ const roles: Module<RolesState, RootState> = {
   state: {
     roles: [],
     permissions: [],
+    meta: null,
   },
   mutations: {
-    setRoles(state, roles: Role[]) {
+    setRoles(state, { roles, meta }) {
       state.roles = roles;
+      state.meta = {
+        from: meta.from,
+        to: meta.to,
+        total: meta.total,
+        perPage: meta.per_page,
+        lastPage: meta.last_page,
+        currentPage: meta.current_page,
+      };
     },
     addRole(state, role: Role) {
       state.roles.push(role);
@@ -51,15 +68,18 @@ const roles: Module<RolesState, RootState> = {
     },
   },
   actions: {
-    async fetchRoles({ commit }) {
+    async fetchRoles({ commit }, { page = 1, perPage = 10 }) {
       try {
         const token = getAccessToken();
         if (token) {
-          api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+          const response = await api.get(`${ENDPOINTS.ROLES}?page=${page}&perPage=${perPage}`, {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          });
+          const data = response.data;
+          commit('setRoles', { roles: data.data, meta: data.meta });
         }
-
-        const response = await api.get(ENDPOINTS.ROLES);
-        commit('setRoles', response.data.data);
       } catch (error) {
         console.error('Error fetching roles:', error);
       }

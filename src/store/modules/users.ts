@@ -17,16 +17,27 @@ export interface User {
 
 export interface UsersState {
   users: User[];
+  meta: {
+    from: number;
+    to: number;
+    total: number;
+    perPage: number;
+    lastPage: number;
+    currentPage: number;
+  } | null;
 }
 
+
 const users: Module<UsersState, RootState> = {
-  namespaced: true,
+   namespaced: true,
   state: {
     users: [],
+    meta: null,
   },
   mutations: {
-    setUsers(state, users: User[]) {
-      state.users = users;
+    setUsers(state, data: { users: User[], meta: UsersState['meta'] }) {
+      state.users = data.users;
+      state.meta = data.meta;
     },
     addUser(state, user: User) {
       state.users.push(user);
@@ -42,15 +53,18 @@ const users: Module<UsersState, RootState> = {
     },
   },
   actions: {
-    async fetchUsers({ commit }) {
+    async fetchUsers({ commit }, { page = 1, perPage = 10 }) {
       try {
         const token = getAccessToken();
         if (token) {
-          api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+          const response = await api.get(`${ENDPOINTS.USERS}?page=${page}&perPage=${perPage}`, {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          });
+          const data = response.data;
+          commit('setUsers', { users: data.data, meta: data.meta });
         }
-
-        const response = await api.get(ENDPOINTS.USERS);
-        commit('setUsers', response.data.data);
       } catch (error) {
         console.error('Error fetching users:', error);
       }

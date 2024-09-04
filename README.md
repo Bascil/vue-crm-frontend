@@ -1,43 +1,52 @@
-# Bingwa CRM
+# vue-crm-frontend
 
-Dashboard starter template built with Vite, Vue 3, Tailwind CSS and TypeScript.
+Frontend built with Vite, Vue 3, Tailwind CSS and TypeScript.
 
 ## Demo
 
-https://vue-crm-frontend.netlify.app/
+https://vue-crm-frontend.netlify.app
 
+### Features
 
-1. Install `@tailwindcss/ui`:
+The project is built with a focus on performance, scalability, and maintainability:
 
-```sh
-pnpm add @tailwindcss/ui
-```
+- Role Based Access Control: Admin, Manager, Engineer.
+- Permissions: Each role has associated permissions.
+- CRM: Customers, Projects, Tasks and Leads.
 
-2. Add the plugin in `tailwind.config.js` without changing anything else:
+## Installation
 
-```js
-// tailwind.config.js
-module.exports = {
-  // ...
-  // rest of the config
-  plugins: [require('@tailwindcss/ui')],
-}
-```
-
-## Project setup
+1. Clone the repository and then install required dependencies
 
 ```
-pnpm install
+git clone git@github.com:Bascil/vue-crm-frontend.git
 ```
 
-### Compiles and hot-reloads for development
+2. Navigate to the target directory
 
 ```
-pnpm dev
+cd vue-crm-frontend
 ```
 
-### Compiles and minifies for production
+3. Install dependencies
+
+```bash
+$ npm install
+```
+
+4. Configure environment variables
 
 ```
-pnpm build
+cp .env.example .env
 ```
+
+```
+VITE_API_BASE_URL=http://localhost:8000/api/v1
+```
+
+## Running the app
+
+```bash
+# development
+$ npm run dev
+

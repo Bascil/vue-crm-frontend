@@ -22,7 +22,7 @@ const hasAccess = (route: string) => {
   
   switch (userRole.value) {
     case 'Admin':
-      return true; // Admin has access to all routes
+    return  accessibleRoutesForAdmin.includes(route);
     case 'Engineer':
       return ['Dashboard', 'Tasks', 'Projects', 'Profile'].includes(route);
     case 'Manager':

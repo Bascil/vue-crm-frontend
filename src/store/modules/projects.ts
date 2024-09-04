@@ -69,35 +69,39 @@ const projects: Module<ProjectsState, RootState> = {
           });
           const data = response.data;
           commit('setProjects', { projects: data.data, meta: data.meta });
+          return response; // Return the response object
         }
       } catch (error) {
         console.error('Error fetching projects:', error);
       }
     },
-    async createProject({ commit }, user: Project) {
+    async createProject({ commit }, project: Project) {
         try {
           const token = getAccessToken();
           if (token) {
             api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
           }
   
-          const response = await api.post(ENDPOINTS.PROJECTS, user);
+          const response = await api.post(ENDPOINTS.PROJECTS, project);
           commit('addProject', response.data.data);
+          return response
+          
         } catch (error) {
-          console.error('Error creating user:', error);
+          throw error;
         }
       },
-      async updateProject({ commit }, user: Project) {
+      async updateProject({ commit }, project: Project) {
         try {
           const token = getAccessToken();
           if (token) {
             api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
           }
   
-          const response = await api.put(`${ENDPOINTS.PROJECTS}/${user.id}`, user);
+          const response = await api.put(`${ENDPOINTS.PROJECTS}/${project.id}`, project);
           commit('updateProject', response.data.data);
+          return response;
         } catch (error) {
-          console.error('Error updating project:', error);
+          throw error;
         }
       },
       async deleteProject({ commit }, projectId: number) {
@@ -107,10 +111,11 @@ const projects: Module<ProjectsState, RootState> = {
             api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
           }
   
-          await api.delete(`${ENDPOINTS.PROJECTS}/${projectId}`);
+          const response = await api.delete(`${ENDPOINTS.PROJECTS}/${projectId}`);
           commit('deleteProject', projectId);
+          return response;
         } catch (error) {
-          console.error('Error deleting project:', error);
+          throw error
         }
       },
   },

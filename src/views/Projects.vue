@@ -1,9 +1,11 @@
 <script lang="ts" setup>
 import { ref, computed, onMounted } from 'vue';
+import { useToast } from 'vue-toastification';
+const toast = useToast();
 import { useStore } from 'vuex';
 
 interface Project {
-  id: string;
+  id?: string;
   name: string;
   description: string;
   status: string;
@@ -16,8 +18,7 @@ const currentPage = ref(1);
 const perPage = ref(10);
 const openModal = ref(false);
 const isEditMode = ref(false);
-const formData = ref({
-  id: '',
+const formData = ref<Project>({
   name: '',
   description: '',
   status: '',
@@ -28,43 +29,69 @@ const formData = ref({
 const projects = computed(() => store.state.projects.projects);
 const meta = computed(() => store.state.projects.meta);
 
-// Function to open the project modal
 function openProjectModal(project?: Project | null) {
-  if (project) {
-    // Set form data for editing
-    formData.value = { ...project };
-    isEditMode.value = true;
-  } else {
-    // Clear form data for creating new project
-    formData.value = {
-      id: '',
-      name: '',
-      description: '',
-      status: '',
-      startDate: '',
-      endDate: '',
-    };
-    isEditMode.value = false;
-  }
+  formData.value = project ? { ...project } : {
+    name: '',
+    description: '',
+    status: '',
+    startDate: '',
+    endDate: '',
+  };
+  isEditMode.value = !!project;
   openModal.value = true;
 }
 
-// Function to handle form submission
 function submitForm() {
-  if (isEditMode.value) {
-    store.dispatch('projects/updateProject', formData.value);
-  } else {
-    store.dispatch('projects/createProject', formData.value);
-  }
-  openModal.value = false;
+  const { id, ...data } = formData.value;
+
+  // Format dates to ISO-8601
+  if (data.startDate) data.startDate = new Date(data.startDate).toISOString();
+  if (data.endDate) data.endDate = new Date(data.endDate).toISOString();
+
+  const action = isEditMode.value
+    ? store.dispatch('projects/updateProject', formData.value)
+    : store.dispatch('projects/createProject', data);
+
+  action
+    .then((response) => {
+      if (response && response.status >= 400) {
+        const errorMessage = Array.isArray(response.data?.message) && response.data.message.length > 0
+          ? response.data.message[0]
+          : 'An error occurred';
+        toast.error(`Error: ${errorMessage}`);
+      } else if (response) {
+        toast.success(isEditMode.value ? 'Project updated successfully!' : 'Project created successfully!');
+        openModal.value = false;
+      } else {
+        toast.error('Unexpected error occurred.');
+      }
+    })
+    .catch((error) => {
+      const errorMessage = error.response?.data?.message?.[0] || 'An error occurred';
+      toast.error(`Error: ${errorMessage}`);
+    });
 }
 
-// Function to delete a project
 function deleteProject(projectId: string) {
-  store.dispatch('projects/deleteProject', projectId);
+  store.dispatch('projects/deleteProject', projectId)
+    .then((response) => {
+      if (response.error || response.message?.length) {
+        const errorMessage = Array.isArray(response.message) && response.message.length > 0
+          ? response.message[0]
+          : 'An error occurred';
+        toast.error(`Error: ${errorMessage}`);
+      } else {
+        toast.success('Project deleted successfully!');
+      }
+    })
+    .catch((error) => {
+      const errorMessage = Array.isArray(error.response?.data?.message) && error.response.data.message.length > 0
+        ? error.response.data.message[0]
+        : 'An error occurred';
+      toast.error(`Error: ${errorMessage}`);
+    });
 }
 
-// Function to handle page changes
 function handlePageChange(page: number) {
   currentPage.value = page;
   store.dispatch('projects/fetchProjects', { page: currentPage.value, perPage: perPage.value });
@@ -74,6 +101,7 @@ onMounted(() => {
   store.dispatch('projects/fetchProjects', { page: currentPage.value, perPage: perPage.value });
 });
 </script>
+
 <template>
     <h3 class="text-3xl font-medium text-gray-700">Projects List</h3>
   

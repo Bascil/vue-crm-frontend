@@ -1,5 +1,7 @@
 <script lang="ts" setup>
 import { ref, reactive, computed, onMounted } from 'vue';
+import { useToast } from 'vue-toastification';
+const toast = useToast();
 import { useStore } from 'vuex';
 
 interface Task {
@@ -9,7 +11,7 @@ interface Task {
   status: string;
   dueDate: string;
   projectId: string;
-  projectName: string;
+  userId?: string;
 }
 
 interface Project {
@@ -27,12 +29,13 @@ const formData = reactive<Task>({
   status: 'pending',
   dueDate: '',
   projectId: '',
-  projectName: '',
 });
 
 const tasks = computed(() => store.state.tasks.tasks);
 const meta = computed(() => store.state.tasks.meta);
 const projects = computed(() => store.state.projects.projects);
+// Get the user ID from the auth module in the Vuex store
+const userId = computed(() => store.getters['auth/getUser']?.id);
 const currentPage = ref(1);
 const perPage = ref(10);
 
@@ -48,23 +51,61 @@ function openTaskModal(task: Task | null = null) {
       status: 'pending',
       dueDate: '',
       projectId: '',
-      projectName: '',
     });
   }
   openModal.value = true;
 }
-
 function submitForm() {
-  if (isEditMode.value) {
-    store.dispatch('tasks/updateTask', formData);
-  } else {
-    store.dispatch('tasks/createTask', formData);
-  }
-  openModal.value = false;
+  const { id, ...data } = formData; 
+
+  // Format dates to ISO-8601
+  if (data.dueDate) data.dueDate = new Date(data.dueDate).toISOString();
+
+  // Include the userId in the data
+  data.userId = userId.value;
+
+  const action = isEditMode.value
+    ? store.dispatch('tasks/updateTask', formData) 
+    : store.dispatch('tasks/createTask', data);
+
+  action
+    .then((response) => {
+      if (response && response.status >= 400) {
+        const errorMessage = Array.isArray(response.data?.message) && response.data.message.length > 0
+          ? response.data.message[0]
+          : 'An error occurred';
+        toast.error(`Error: ${errorMessage}`);
+      } else if (response) {
+        toast.success(isEditMode.value ? 'Task updated successfully!' : 'Task created successfully!');
+        openModal.value = false;
+      } else {
+        toast.error('Unexpected error occurred.');
+      }
+    })
+    .catch((error) => {
+      const errorMessage = error.response?.data?.message?.[0] || 'An error occurred';
+      toast.error(`Error: ${errorMessage}`);
+    });
 }
 
-function deleteTask(taskId: string) {
-  store.dispatch('tasks/deleteTask', taskId);
+function deleteTask(projectId: string) {
+  store.dispatch('tasks/deleteTask', projectId)
+    .then((response) => {
+      if (response.error || response.message?.length) {
+        const errorMessage = Array.isArray(response.message) && response.message.length > 0
+          ? response.message[0]
+          : 'An error occurred';
+        toast.error(`Error: ${errorMessage}`);
+      } else {
+        toast.success('Task deleted successfully!');
+      }
+    })
+    .catch((error) => {
+      const errorMessage = Array.isArray(error.response?.data?.message) && error.response.data.message.length > 0
+        ? error.response.data.message[0]
+        : 'An error occurred';
+      toast.error(`Error: ${errorMessage}`);
+    });
 }
 
 function handleCreateTaskClick() {

@@ -69,7 +69,7 @@ const projects: Module<ProjectsState, RootState> = {
           });
           const data = response.data;
           commit('setProjects', { projects: data.data, meta: data.meta });
-          return response; // Return the response object
+          return response;
         }
       } catch (error) {
         console.error('Error fetching projects:', error);

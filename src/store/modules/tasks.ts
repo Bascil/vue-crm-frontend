@@ -84,8 +84,9 @@ const tasks: Module<TasksState, RootState> = {
   
           const response = await api.post(ENDPOINTS.TASKS, user);
           commit('addTask', response.data.data);
+          return response
         } catch (error) {
-          console.error('Error creating user:', error);
+          throw error
         }
       },
       async updateTask({ commit }, user: Task) {
@@ -97,8 +98,9 @@ const tasks: Module<TasksState, RootState> = {
   
           const response = await api.put(`${ENDPOINTS.TASKS}/${user.id}`, user);
           commit('updateTask', response.data.data);
+          return response
         } catch (error) {
-          console.error('Error updating task:', error);
+          throw error
         }
       },
       async deleteTask({ commit }, taskId: number) {
@@ -108,10 +110,11 @@ const tasks: Module<TasksState, RootState> = {
             api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
           }
   
-          await api.delete(`${ENDPOINTS.TASKS}/${taskId}`);
+          const response = await api.delete(`${ENDPOINTS.TASKS}/${taskId}`);
           commit('deleteTask', taskId);
+          return response
         } catch (error) {
-          console.error('Error deleting task:', error);
+          throw error
         }
       },
   },

@@ -29,6 +29,7 @@ interface SetRolePayload {
 }
 
 interface SetUserPayload {
+  id: string
   firstName: string
   lastName: string
   email: string
@@ -82,12 +83,12 @@ const auth: Module<AuthState, RootState> = {
     async login({ commit }, { email, password }: { email: string, password: string }) {
       try {
         const response = await api.post(ENDPOINTS.LOGIN, { email, password })
-        const { access_token, refresh_token, roleName, firstName, lastName } = response.data.data
+        const { access_token, refresh_token, roleName, id, firstName, lastName } = response.data.data
         if (access_token && roleName) {
           commit('SET_ACCESS_TOKEN', { token: access_token })
           commit('SET_REFRESH_TOKEN', { token: refresh_token })
           commit('SET_ROLE', { roleName })
-          commit('SET_USER', { firstName, lastName, email })
+          commit('SET_USER', { id, firstName, lastName, email })
         } else {
           console.error('Unexpected API response structure:', response.data)
         }

@@ -45,17 +45,17 @@ const tasks: Module<TasksState, RootState> = {
         currentPage: meta.currentPage,
       };
     },
-    addTask(state, lead: Task) {
-      state.tasks.push(lead);
+    addTask(state, task: Task) {
+      state.tasks.push(task);
     },
     updateTask(state, updatedTask: Task) {
-      const index = state.tasks.findIndex(lead => lead.id === updatedTask.id);
+      const index = state.tasks.findIndex(task => task.id === updatedTask.id);
       if (index !== -1) {
         state.tasks.splice(index, 1, updatedTask);
       }
     },
-    deleteTask(state, leadId: string) {
-      state.tasks = state.tasks.filter(lead => lead.id !== leadId);
+    deleteTask(state, taskId: string) {
+      state.tasks = state.tasks.filter(task => task.id !== taskId);
     },
   },
   actions: {
@@ -98,20 +98,20 @@ const tasks: Module<TasksState, RootState> = {
           const response = await api.put(`${ENDPOINTS.TASKS}/${user.id}`, user);
           commit('updateTask', response.data.data);
         } catch (error) {
-          console.error('Error updating lead:', error);
+          console.error('Error updating task:', error);
         }
       },
-      async deleteTask({ commit }, leadId: number) {
+      async deleteTask({ commit }, taskId: number) {
         try {
           const token = getAccessToken();
           if (token) {
             api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
           }
   
-          await api.delete(`${ENDPOINTS.TASKS}/${leadId}`);
-          commit('deleteTask', leadId);
+          await api.delete(`${ENDPOINTS.TASKS}/${taskId}`);
+          commit('deleteTask', taskId);
         } catch (error) {
-          console.error('Error deleting lead:', error);
+          console.error('Error deleting task:', error);
         }
       },
   },

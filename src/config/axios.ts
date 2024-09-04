@@ -1,9 +1,10 @@
 import axios from 'axios'
 import store from '@/store'
+import { API_BASE_URL } from './api'
 import { ENDPOINTS } from '@/config/api'
 
 const api = axios.create({
-  baseURL: 'https://your-api-url.com/api',
+  baseURL: API_BASE_URL,
   headers: {
     'Content-Type': 'application/json',
   },
@@ -34,7 +35,7 @@ api.interceptors.response.use(
 
       try {
         const response = await api.post(ENDPOINTS.REFRESH_TOKEN, {
-          refresh_token: localStorage.getItem('refresh_token')
+          refreshToken: localStorage.getItem('refresh_token')
         })
 
         const { access_token } = response.data

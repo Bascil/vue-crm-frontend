@@ -78,7 +78,7 @@ function handlePageChange(page: number) {
 
 onMounted(() => {
   store.dispatch('tasks/fetchTasks', { page: currentPage.value, perPage: perPage.value });
-  store.dispatch('projects/fetchProjects'); // Fetch projects when component mounts
+  store.dispatch('projects/fetchProjects', {page:1, perPage:10}); // Fetch projects when component mounts
 });
 </script>
 

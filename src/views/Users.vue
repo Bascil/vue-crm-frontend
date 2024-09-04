@@ -1,6 +1,8 @@
 <script lang="ts" setup>
 import { ref, reactive, computed, onMounted } from 'vue';
 import { useStore } from 'vuex';
+import { useToast } from 'vue-toastification';
+const toast = useToast();
 
 // Define types
 interface User {
@@ -45,18 +47,51 @@ function openUserModal(user: User | null = null) {
   }
   openModal.value = true;
 }
-
 function submitForm() {
-  if (isEditMode.value) {
-    store.dispatch('users/updateUser', formData);
-  } else {
-    store.dispatch('users/createUser', formData);
-  }
-  openModal.value = false;
+  const { ...data } = formData; 
+
+  const action = isEditMode.value
+    ? store.dispatch('users/updateUser', formData) 
+    : store.dispatch('users/createUser', data);
+
+  action
+    .then((response) => {
+      if (response && response.status >= 400) {
+        const errorMessage = Array.isArray(response.data?.message) && response.data.message.length > 0
+          ? response.data.message[0]
+          : 'An error occurred';
+        toast.error(`Error: ${errorMessage}`);
+      } else if (response) {
+        toast.success(isEditMode.value ? 'User updated successfully!' : 'User created successfully!');
+        openModal.value = false;
+      } else {
+        toast.error('Unexpected error occurred.');
+      }
+    })
+    .catch((error) => {
+      const errorMessage = error.response?.data?.message?.[0] || 'An error occurred';
+      toast.error(`Error: ${errorMessage}`);
+    });
 }
 
-function deleteUser(userId: string) {
-  store.dispatch('users/deleteUser', userId);
+function deleteUser(projectId: string) {
+  store.dispatch('users/deleteUser', projectId)
+    .then((response) => {
+      if (response.error || response.message?.length) {
+        const errorMessage = Array.isArray(response.message) && response.message.length > 0
+          ? response.message[0]
+          : 'An error occurred';
+        toast.error(`Error: ${errorMessage}`);
+      } else {
+        toast.success('User deleted successfully!');
+      }
+    })
+    .catch((error) => {
+      const errorMessage = Array.isArray(error.response?.data?.message) && error.response.data.message.length > 0
+        ? error.response.data.message[0]
+        : 'An error occurred';
+      toast.error(`Error: ${errorMessage}`);
+    });
 }
 
 function handleCreateUserClick() {

@@ -85,8 +85,9 @@ const leads: Module<LeadsState, RootState> = {
   
           const response = await api.post(ENDPOINTS.LEADS, user);
           commit('addLead', response.data.data);
+          return response
         } catch (error) {
-          console.error('Error creating user:', error);
+          throw error
         }
       },
       async updateLead({ commit }, user: Lead) {
@@ -98,8 +99,9 @@ const leads: Module<LeadsState, RootState> = {
   
           const response = await api.put(`${ENDPOINTS.LEADS}/${user.id}`, user);
           commit('updateLead', response.data.data);
+          return response;
         } catch (error) {
-          console.error('Error updating lead:', error);
+          throw error
         }
       },
       async deleteLead({ commit }, leadId: number) {
@@ -109,10 +111,11 @@ const leads: Module<LeadsState, RootState> = {
             api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
           }
   
-          await api.delete(`${ENDPOINTS.LEADS}/${leadId}`);
+          const response =await api.delete(`${ENDPOINTS.LEADS}/${leadId}`);
           commit('deleteLead', leadId);
+          return response
         } catch (error) {
-          console.error('Error deleting lead:', error);
+          throw error
         }
       },
   },

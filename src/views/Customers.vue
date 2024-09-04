@@ -1,6 +1,8 @@
 <script lang="ts" setup>
 import { ref, reactive, computed, onMounted } from 'vue';
 import { useStore } from 'vuex';
+import { useToast } from 'vue-toastification';
+const toast = useToast();
 
 // Define types
 interface Customer {
@@ -50,16 +52,50 @@ function openCustomerModal(customer: Customer | null = null) {
 }
 
 function submitForm() {
-  if (isEditMode.value) {
-    store.dispatch('customers/updateCustomer', formData);
-  } else {
-    store.dispatch('customers/createCustomer', formData);
-  }
-  openModal.value = false;
+  const { ...data } = formData; 
+
+  const action = isEditMode.value
+    ? store.dispatch('customers/updateCustomer', formData) 
+    : store.dispatch('customers/createCustomer', data);
+
+  action
+    .then((response) => {
+      if (response && response.status >= 400) {
+        const errorMessage = Array.isArray(response.data?.message) && response.data.message.length > 0
+          ? response.data.message[0]
+          : 'An error occurred';
+        toast.error(`Error: ${errorMessage}`);
+      } else if (response) {
+        toast.success(isEditMode.value ? 'Customer updated successfully!' : 'Customer created successfully!');
+        openModal.value = false;
+      } else {
+        toast.error('Unexpected error occurred.');
+      }
+    })
+    .catch((error) => {
+      const errorMessage = error.response?.data?.message?.[0] || 'An error occurred';
+      toast.error(`Error: ${errorMessage}`);
+    });
 }
 
-function deleteCustomer(customerId: string) {
-  store.dispatch('customers/deleteCustomer', customerId);
+function deleteCustomer(projectId: string) {
+  store.dispatch('customers/deleteCustomer', projectId)
+    .then((response) => {
+      if (response.error || response.message?.length) {
+        const errorMessage = Array.isArray(response.message) && response.message.length > 0
+          ? response.message[0]
+          : 'An error occurred';
+        toast.error(`Error: ${errorMessage}`);
+      } else {
+        toast.success('Customer deleted successfully!');
+      }
+    })
+    .catch((error) => {
+      const errorMessage = Array.isArray(error.response?.data?.message) && error.response.data.message.length > 0
+        ? error.response.data.message[0]
+        : 'An error occurred';
+      toast.error(`Error: ${errorMessage}`);
+    });
 }
 
 function handleCreateCustomerClick() {
@@ -169,7 +205,7 @@ onMounted(() => {
           <!-- Modal Footer -->
           <div class="flex items-center justify-between pt-4">
             <button @click="submitForm" class="px-4 py-2 font-medium tracking-wide text-white capitalize transition-colors duration-200 transform bg-indigo-600 rounded-md hover:bg-indigo-500 focus:outline-none focus:bg-indigo-500">
-              {{ isEditMode ? 'Update User' : 'Create User' }}
+              {{ isEditMode ? 'Update Customer' : 'Create Customer' }}
             </button>
             <button @click="openModal = false" class="px-4 py-2 font-medium tracking-wide text-white capitalize transition-colors duration-200 transform bg-red-600 rounded-md hover:bg-red-500 focus:outline-none focus:bg-red-500">
               Cancel

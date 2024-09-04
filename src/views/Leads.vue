@@ -1,6 +1,8 @@
 <script lang="ts" setup>
 import { ref, reactive, computed, onMounted } from 'vue';
 import { useStore } from 'vuex';
+import { useToast } from 'vue-toastification';
+const toast = useToast();
 
 // Define types
 interface Lead {
@@ -53,16 +55,50 @@ function openLeadModal(lead: Lead | null = null) {
 }
 
 function submitForm() {
-  if (isEditMode.value) {
-    store.dispatch('leads/updateLead', formData);
-  } else {
-    store.dispatch('leads/createLead', formData);
-  }
-  openModal.value = false;
+  const { ...data } = formData; 
+
+  const action = isEditMode.value
+    ? store.dispatch('leads/updateLead', formData) 
+    : store.dispatch('leads/createLead', data);
+
+  action
+    .then((response) => {
+      if (response && response.status >= 400) {
+        const errorMessage = Array.isArray(response.data?.message) && response.data.message.length > 0
+          ? response.data.message[0]
+          : 'An error occurred';
+        toast.error(`Error: ${errorMessage}`);
+      } else if (response) {
+        toast.success(isEditMode.value ? 'Lead updated successfully!' : 'Lead created successfully!');
+        openModal.value = false;
+      } else {
+        toast.error('Unexpected error occurred.');
+      }
+    })
+    .catch((error) => {
+      const errorMessage = error.response?.data?.message?.[0] || 'An error occurred';
+      toast.error(`Error: ${errorMessage}`);
+    });
 }
 
-function deleteLead(leadId: string) {
-  store.dispatch('leads/deleteLead', leadId);
+function deleteLead(projectId: string) {
+  store.dispatch('leads/deleteLead', projectId)
+    .then((response) => {
+      if (response.error || response.message?.length) {
+        const errorMessage = Array.isArray(response.message) && response.message.length > 0
+          ? response.message[0]
+          : 'An error occurred';
+        toast.error(`Error: ${errorMessage}`);
+      } else {
+        toast.success('Lead deleted successfully!');
+      }
+    })
+    .catch((error) => {
+      const errorMessage = Array.isArray(error.response?.data?.message) && error.response.data.message.length > 0
+        ? error.response.data.message[0]
+        : 'An error occurred';
+      toast.error(`Error: ${errorMessage}`);
+    });
 }
 
 function handleCreateLeadClick() {

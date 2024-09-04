@@ -5,7 +5,6 @@ const toast = useToast();
 import { useStore } from 'vuex';
 
 interface Task {
-  id: string;
   title: string;
   description: string;
   status: string;
@@ -23,7 +22,6 @@ const store = useStore();
 const openModal = ref(false);
 const isEditMode = ref(false);
 const formData = reactive<Task>({
-  id: '',
   title: '',
   description: '',
   status: 'pending',
@@ -45,7 +43,6 @@ function openTaskModal(task: Task | null = null) {
     Object.assign(formData, task);
   } else {
     Object.assign(formData, {
-      id: '',
       title: '',
       description: '',
       status: 'pending',
@@ -56,7 +53,7 @@ function openTaskModal(task: Task | null = null) {
   openModal.value = true;
 }
 function submitForm() {
-  const { id, ...data } = formData; 
+  const { ...data } = formData; 
 
   // Format dates to ISO-8601
   if (data.dueDate) data.dueDate = new Date(data.dueDate).toISOString();

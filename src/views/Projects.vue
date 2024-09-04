@@ -42,7 +42,7 @@ function openProjectModal(project?: Project | null) {
 }
 
 function submitForm() {
-  const { id, ...data } = formData.value;
+  const { id,...data } = formData.value;
 
   // Format dates to ISO-8601
   if (data.startDate) data.startDate = new Date(data.startDate).toISOString();

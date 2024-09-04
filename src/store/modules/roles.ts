@@ -106,8 +106,9 @@ const roles: Module<RolesState, RootState> = {
 
         const response = await api.post(ENDPOINTS.ROLES, role);
         commit('addRole', response.data.data);
+        return response;
       } catch (error) {
-        console.error('Error creating role:', error);
+        throw error
       }
     },
     async updateRole({ commit }, role: Role) {
@@ -119,8 +120,9 @@ const roles: Module<RolesState, RootState> = {
 
         const response = await api.put(`${ENDPOINTS.ROLES}/${role.id}`, role);
         commit('updateRole', response.data.data);
+        return response
       } catch (error) {
-        console.error('Error updating role:', error);
+        throw error
       }
     },
     async deleteRole({ commit }, roleId: string) {
@@ -130,10 +132,12 @@ const roles: Module<RolesState, RootState> = {
           api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
         }
 
-        await api.delete(`${ENDPOINTS.ROLES}/${roleId}`);
+        const response = await api.delete(`${ENDPOINTS.ROLES}/${roleId}`);
         commit('deleteRole', roleId);
+
+        return response
       } catch (error) {
-        console.error('Error deleting role:', error);
+        throw error
       }
     },
   },

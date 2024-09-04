@@ -18,7 +18,7 @@ const inactiveClass = ref(
 );
 
 const hasAccess = (route: string) => {
-  const accessibleRoutesForAdmin = ['Dashboard', 'Tasks', 'Projects', 'Profile', 'Customers', 'Leads'];
+  const accessibleRoutesForAdmin = ['Dashboard', 'Users', 'Roles', 'Tasks', 'Projects', 'Profile', 'Customers', 'Leads'];
   
   switch (userRole.value) {
     case 'Admin':
@@ -96,6 +96,44 @@ const hasAccess = (route: string) => {
           </svg>
 
           <span class="mx-4">Dashboard</span>
+        </router-link>
+
+        <router-link
+          v-if="hasAccess('Users')"
+          class="flex items-center px-6 py-2 mt-4 duration-200 border-l-4"
+          :class="[$route.name === 'Users' ? activeClass : inactiveClass]"
+          to="/users"
+        >
+          <!-- Users SVG -->
+          <svg
+            class="w-5 h-5"
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 24 24"
+            fill="currentColor"
+          >
+            <path d="M3 6c0-1.11.89-2 2-2s2 .89 2 2-2 2-2 2-2-.89-2-2zm6-2h6c1.1 0 2 .9 2 2s-.9 2-2 2H9c-1.1 0-2-.9-2-2s.9-2 2-2zm10 2c1.1 0 2 .89 2 2s-.9 2-2 2-2-.89-2-2 .9-2 2-2zm-4 2c0-1.1.9-2 2-2s2 .9 2 2-2 2-2 2-2-.9-2-2z"/>
+          </svg>
+
+          <span class="mx-4">Users</span>
+        </router-link>
+
+        <router-link
+          v-if="hasAccess('Roles')"
+          class="flex items-center px-6 py-2 mt-4 duration-200 border-l-4"
+          :class="[$route.name === 'Roles' ? activeClass : inactiveClass]"
+          to="/roles"
+        >
+          <!-- Roles SVG -->
+          <svg
+            class="w-5 h-5"
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 24 24"
+            fill="currentColor"
+          >
+            <path d="M3 6c0-1.11.89-2 2-2s2 .89 2 2-2 2-2 2-2-.89-2-2zm6-2h6c1.1 0 2 .9 2 2s-.9 2-2 2H9c-1.1 0-2-.9-2-2s.9-2 2-2zm10 2c1.1 0 2 .89 2 2s-.9 2-2 2-2-.89-2-2 .9-2 2-2zm-4 2c0-1.1.9-2 2-2s2 .9 2 2-2 2-2 2-2-.9-2-2z"/>
+          </svg>
+
+          <span class="mx-4">Roles</span>
         </router-link>
 
         <router-link

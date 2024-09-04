@@ -84,8 +84,9 @@ const customers: Module<CustomersState, RootState> = {
   
           const response = await api.post(ENDPOINTS.CUSTOMERS, user);
           commit('addCustomer', response.data.data);
+          return response;
         } catch (error) {
-          console.error('Error creating user:', error);
+          throw error
         }
       },
       async updateCustomer({ commit }, user: Customer) {
@@ -97,8 +98,9 @@ const customers: Module<CustomersState, RootState> = {
   
           const response = await api.put(`${ENDPOINTS.CUSTOMERS}/${user.id}`, user);
           commit('updateCustomer', response.data.data);
+          return response
         } catch (error) {
-          console.error('Error updating customer:', error);
+          throw error
         }
       },
       async deleteCustomer({ commit }, customerId: number) {
@@ -108,10 +110,11 @@ const customers: Module<CustomersState, RootState> = {
             api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
           }
   
-          await api.delete(`${ENDPOINTS.CUSTOMERS}/${customerId}`);
+          const response =await api.delete(`${ENDPOINTS.CUSTOMERS}/${customerId}`);
           commit('deleteCustomer', customerId);
+          return response;
         } catch (error) {
-          console.error('Error deleting customer:', error);
+          throw error
         }
       },
   },

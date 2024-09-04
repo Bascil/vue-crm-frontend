@@ -12,6 +12,7 @@ interface User {
   email: string;
   phoneNumber: string;
   taxPin: string;
+  password: string;
 }
 
 const store = useStore();
@@ -24,6 +25,7 @@ const formData = reactive<User>({
   email: '',
   phoneNumber: '',
   taxPin: '',
+  password: '',
 });
 
 const users = computed(() => store.state.users.users);
@@ -43,6 +45,7 @@ function openUserModal(user: User | null = null) {
       email: '',
       phoneNumber: '',
       taxPin: '',
+      password: '',
     });
   }
   openModal.value = true;
@@ -196,6 +199,9 @@ onMounted(() => {
             <input v-model="formData.email" type="email" placeholder="Email" class="w-full px-4 py-2 border rounded-md">
             <input v-model="formData.phoneNumber" type="text" placeholder="Phone Number" class="w-full px-4 py-2 border rounded-md">
             <input v-model="formData.taxPin" type="text" placeholder="Tax PIN" class="w-full px-4 py-2 border rounded-md">
+            <template v-if="!isEditMode">
+              <input v-model="formData.password" type="password" placeholder="Password" class="w-full px-4 py-2 border rounded-md">
+            </template>
           </div>
 
           <!-- Modal Footer -->

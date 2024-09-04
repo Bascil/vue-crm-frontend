@@ -21,7 +21,7 @@ const isEditMode = ref(false);
 const formData = ref<Project>({
   name: '',
   description: '',
-  status: '',
+  status: 'planning',
   startDate: '',
   endDate: '',
 });
@@ -33,7 +33,7 @@ function openProjectModal(project?: Project | null) {
   formData.value = project ? { ...project } : {
     name: '',
     description: '',
-    status: '',
+    status: 'planning',
     startDate: '',
     endDate: '',
   };
@@ -178,8 +178,25 @@ onMounted(() => {
         <div class="mt-4">
           <input v-model="formData.name" type="text" placeholder="Project Name" class="w-full px-4 py-2 mb-2 border rounded-md" />
           <textarea v-model="formData.description" placeholder="Project Description" rows="4" class="w-full px-4 py-2 mb-2 border rounded-md"></textarea>
-          <input v-model="formData.startDate" type="date" class="w-full px-4 py-2 mb-2 border rounded-md" />
-          <input v-model="formData.endDate" type="date" class="w-full px-4 py-2 mb-2 border rounded-md" />
+          <div class="mb-4">
+  <label for="startDate" class="block text-sm font-medium text-gray-700">Project Start</label>
+  <input
+    id="startDate"
+    v-model="formData.startDate"
+    type="date"
+    class="w-full px-4 py-2 mb-2 border rounded-md"
+  />
+</div>
+
+<div class="mb-4">
+  <label for="endDate" class="block text-sm font-medium text-gray-700">Project End</label>
+  <input
+    id="endDate"
+    v-model="formData.endDate"
+    type="date"
+    class="w-full px-4 py-2 mb-2 border rounded-md"
+  />
+</div>
           <select v-model="formData.status" class="w-full px-4 py-2 mb-2 border rounded-md">
             <option value="planning">Planning</option>
             <option value="in_progress">In Progress</option>

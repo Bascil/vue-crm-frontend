@@ -44,6 +44,16 @@ function openProjectModal(project?: Project | null) {
 function submitForm() {
   const { id,...data } = formData.value;
 
+  if (!formData.value.startDate) {
+    toast.error('Start Date is required.');
+    return;
+  }
+
+  if (!formData.value.endDate) {
+    toast.error('End Date is required.');
+    return;
+  }
+
   // Format dates to ISO-8601
   if (data.startDate) data.startDate = new Date(data.startDate).toISOString();
   if (data.endDate) data.endDate = new Date(data.endDate).toISOString();
@@ -67,7 +77,7 @@ function submitForm() {
       }
     })
     .catch((error) => {
-      const errorMessage = error.response?.data?.message?.[0] || 'An error occurred';
+      const errorMessage = error.message || 'An error occurred';
       toast.error(`Error: ${errorMessage}`);
     });
 }

@@ -72,9 +72,9 @@ const handleLogout = async () => {
               <p>{{ userName }}</p>
             </div>
             
-            <router-link to="/profile" class="block px-4 py-2 text-sm text-gray-700 hover:bg-indigo-600 hover:text-white">
+            <!-- <router-link to="/profile" class="block px-4 py-2 text-sm text-gray-700 hover:bg-indigo-600 hover:text-white">
               Profile
-            </router-link>
+            </router-link> -->
          
             <router-link to="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-indigo-600 hover:text-white" @click="handleLogout">
               Log out

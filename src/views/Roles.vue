@@ -113,12 +113,12 @@ function changePage(page: number) {
   <div>
     <h3 class="text-3xl font-medium text-gray-700">Role List</h3>
     <div class="mt-4">
-      <button
+      <!-- <button
         @click="() => openRoleModal(null)"
         class="px-4 py-2 font-medium tracking-wide text-white capitalize transition-colors duration-200 transform bg-indigo-600 rounded-md hover:bg-indigo-500 focus:outline-none focus:bg-indigo-500"
       >
         Create Role
-      </button>
+      </button> -->
 
       <!-- List of Roles -->
       <div class="mt-6 overflow-x-auto">

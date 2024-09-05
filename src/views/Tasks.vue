@@ -58,6 +58,11 @@ function openTaskModal(task: Task | null = null) {
 function submitForm() {
   const { ...data } = formData; 
 
+  if (!formData.dueDate) {
+    toast.error('Due Date is required.');
+    return;
+  }
+
   // Format dates to ISO-8601
   if (data.dueDate) data.dueDate = new Date(data.dueDate).toISOString();
 

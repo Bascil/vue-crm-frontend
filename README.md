@@ -2,24 +2,6 @@
 
 Frontend built with Vite, Vue 3, Tailwind CSS and TypeScript.
 
-## Demo
-
-https://vue-crm-frontend.netlify.app
-
-## Test Credentials
-
-### Admin
-Email: admin@bingwa.com 
-Password: admin
-
-### Project Manager
-Email: manager@bingwa.com 
-Password: manager
-
-### Engineer
-Email: engineer@bingwa.com 
-Password: engineer
-
 ### Features
 
 The project is built with a focus on performance, scalability, and maintainability:
